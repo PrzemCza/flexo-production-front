@@ -1,19 +1,20 @@
 import { useState } from "react";
-import { createDieCut } from "../api/dieCuts";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../components/ui/useToast";
+import { createDieCut } from "@/modules/diecut/api/dieCuts";
+import type { DieCutCreatePayload } from "@/modules/diecut/api/dieCuts";
+import { useToast } from "@/shared/hooks/useToast";
 
 export default function DieCutCreate() {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<DieCutCreatePayload>({
     dieNumber: "",
     repeatTeeth: 0,
     projectId: 0,
     status: "ACTIVE",
     notes: "",
-    machine: "", // 🔥 NOWE POLE
+    machine: "", 
   });
 
   const [loading, setLoading] = useState(false);
@@ -26,22 +27,23 @@ export default function DieCutCreate() {
     const { name, value } = e.target;
 
     setForm((prev) => {
-      // 🔥 Jeśli zmieniamy status i NIE jest ACTIVE → czyścimy machine
+      // Jeśli zmieniamy status i NIE jest ACTIVE → czyścimy machine
       if (name === "status" && value !== "ACTIVE") {
         return {
           ...prev,
-          status: value,
+          status: value as DieCutCreatePayload["status"],
           machine: "",
         };
       }
 
+      const newValue = name === "repeatTeeth" || name === "projectId"
+        ? Number(value)
+        : value;
+
       return {
         ...prev,
-        [name]:
-          name === "repeatTeeth" || name === "projectId"
-            ? Number(value)
-            : value,
-      };
+        [name]: newValue, // 'as any' tutaj pozwala na dynamiczny klucz przy rygorystycznym typie Payload
+      } as Partial<DieCutCreatePayload> as DieCutCreatePayload;
     });
   };
 
@@ -56,7 +58,7 @@ export default function DieCutCreate() {
     try {
       await createDieCut(form);
       showToast("Wykrojnik został dodany.", "success");
-      navigate("/");
+      navigate("/die-cuts"); // Zmienione na pełną ścieżkę dla pewności
     } catch (err) {
       console.error("Błąd podczas tworzenia wykrojnika:", err);
       showToast("Nie udało się utworzyć wykrojnika.", "error");
@@ -67,7 +69,7 @@ export default function DieCutCreate() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">Dodaj wykrojnik</h1>
+      <h1 className="text-2xl font-semibold mb-6 text-slate-100">Dodaj wykrojnik</h1>
 
       <form onSubmit={handleSubmit} className="max-w-xl">
         <div className="space-y-6 bg-slate-800 p-6 rounded-lg shadow-lg border border-slate-700">
@@ -83,7 +85,7 @@ export default function DieCutCreate() {
               value={form.dieNumber}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none text-slate-100"
               required
             />
           </div>
@@ -99,7 +101,7 @@ export default function DieCutCreate() {
               value={form.repeatTeeth}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none text-slate-100"
               required
             />
           </div>
@@ -115,7 +117,7 @@ export default function DieCutCreate() {
               value={form.projectId}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none text-slate-100"
               required
             />
           </div>
@@ -130,7 +132,7 @@ export default function DieCutCreate() {
               value={form.status}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none text-slate-100"
             >
               <option value="ACTIVE">ACTIVE</option>
               <option value="INACTIVE">INACTIVE</option>
@@ -147,10 +149,10 @@ export default function DieCutCreate() {
               </label>
               <select
                 name="machine"
-                value={form.machine}
+                value={form.machine || ""}
                 onChange={handleChange}
                 className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                           focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+                           focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none text-slate-100"
                 required={form.status === "ACTIVE"}
               >
                 <option value="">Wybierz maszynę</option>
@@ -169,10 +171,10 @@ export default function DieCutCreate() {
             </label>
             <textarea
               name="notes"
-              value={form.notes}
+              value={form.notes || ""}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none text-slate-100"
               rows={3}
             />
           </div>
@@ -180,10 +182,10 @@ export default function DieCutCreate() {
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium 
-                       shadow-md transition disabled:opacity-50"
+            className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium 
+                       shadow-md transition disabled:opacity-50 text-white"
           >
-            {loading ? "Zapisywanie..." : "Zapisz"}
+            {loading ? "Zapisywanie..." : "Zapisz wykrojnik"}
           </button>
         </div>
       </form>

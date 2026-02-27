@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchDieCuts } from "../api/dieCuts";
-import type { DieCut, DieCutPage } from "../api/dieCuts";
+import { fetchDieCuts } from "@/modules/diecut/api/dieCuts";
+import type { DieCut, DieCutPage } from "@/modules/diecut/api/dieCuts";
 import { Link } from "react-router-dom";
 
 export default function DieCutsList() {

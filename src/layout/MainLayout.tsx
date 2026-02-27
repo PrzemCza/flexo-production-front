@@ -4,14 +4,14 @@ export default function MainLayout() {
   const location = useLocation();
 
   const menu = [
-    { label: "Wykrojniki", path: "/" },
-    { label: "Dodaj wykrojnik", path: "/die-cuts/new" },
+    { label: "Wykrojniki", path: "/die-cuts" },
+    { label: "Dodaj wykrojnik", path: "/die-cuts/create" },
   ];
 
   // MAPA STATYCZNYCH ŚCIEŻEK
   const breadcrumbMap: Record<string, string[]> = {
-    "/": ["Wykrojniki"],
-    "/die-cuts/new": ["Wykrojniki", "Dodaj"],
+    "/die-cuts": ["Wykrojniki"],
+    "/die-cuts/create": ["Wykrojniki", "Dodaj"],
   };
 
   // OBSŁUGA ŚCIEŻEK DYNAMICZNYCH

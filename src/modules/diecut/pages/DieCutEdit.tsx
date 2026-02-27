@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getDieCut, updateDieCut } from "../api/dieCuts";
-import type { DieCut } from "../api/dieCuts";
-import ConfirmModal from "../components/ui/ConfirmModal";
-import { useToast } from "../components/ui/useToast";
+import { getDieCut, updateDieCut } from "@/modules/diecut/api/dieCuts";
+import type { DieCut } from "@/modules/diecut/api/dieCuts";
+import ConfirmModal from "@/shared/components/ConfirmModal";
+import { useToast } from '@/shared/hooks/useToast';
 
 export default function DieCutEdit() {
   const { id } = useParams();
@@ -16,15 +16,21 @@ export default function DieCutEdit() {
 
   useEffect(() => {
     const load = async () => {
-      const data = await getDieCut(Number(id));
-      setForm(data);
-      setLoading(false);
+      try {
+        const data = await getDieCut(Number(id));
+        setForm(data);
+      } catch (err) {
+        console.error("Błąd ładowania:", err);
+        showToast("Nie udało się pobrać danych wykrojnika.", "error");
+      } finally {
+        setLoading(false);
+      }
     };
 
     load();
-  }, [id]);
+  }, [id, showToast]);
 
-  const handleChange = (
+const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
@@ -34,22 +40,24 @@ export default function DieCutEdit() {
     setForm((prev) => {
       if (!prev) return prev;
 
-      // 🔥 Jeśli zmieniamy status i NIE jest ACTIVE → czyścimy machine
+      // Jeśli zmieniamy status i NIE jest ACTIVE → czyścimy machine
       if (name === "status" && value !== "ACTIVE") {
         return {
           ...prev,
-          status: value,
+          status: value as DieCut["status"],
           machine: "",
         };
       }
 
+      const newValue = name === "repeatTeeth" || name === "projectId"
+        ? Number(value)
+        : value;
+
+      // Poprawka błędu 'any' - rzutujemy cały obiekt na DieCut
       return {
         ...prev,
-        [name]:
-          name === "repeatTeeth" || name === "projectId"
-            ? Number(value)
-            : value,
-      };
+        [name]: newValue,
+      } as DieCut; 
     });
   };
 
@@ -73,8 +81,7 @@ export default function DieCutEdit() {
     }
   };
 
-  if (loading || !form) return <div>Ładowanie...</div>;
-
+  if (loading || !form) return <div className="p-6 text-slate-400">Ładowanie...</div>;
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-6">Edytuj wykrojnik</h1>

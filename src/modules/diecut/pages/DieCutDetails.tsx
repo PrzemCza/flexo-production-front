@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getDieCut, deleteDieCut } from "../api/dieCuts";
-import type { DieCut } from "../api/dieCuts";
-import { useToast } from "../components/ui/useToast";
-import ConfirmModal from "../components/ui/ConfirmModal";
+import { getDieCut, deleteDieCut } from "@/modules/diecut/api/dieCuts";
+import type { DieCut } from "@/modules/diecut/api/dieCuts";
+import { useToast } from '@/shared/hooks/useToast';
+import ConfirmModal from "@/shared/components/ConfirmModal";
 
 export default function DieCutDetails() {
   const { id } = useParams();
@@ -15,19 +15,25 @@ export default function DieCutDetails() {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const result = await getDieCut(Number(id));
-        setData(result);
-      } catch (err) {
-        console.error("Błąd pobierania:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const dieId = Number(id);
+      
+      // Jeśli id to "create" lub inny tekst, nie rób zapytania
+      if (isNaN(dieId)) return; 
 
-    load();
-  }, [id]);
+      const load = async () => {
+        setLoading(true); // Ustaw ładowanie na true przy zmianie ID
+        try {
+          const result = await getDieCut(dieId);
+          setData(result);
+        } catch (err) {
+          console.error("Błąd pobierania:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      load();
+    }, [id]);
 
   const handleDelete = () => {
     setConfirmOpen(true);
