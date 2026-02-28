@@ -6,27 +6,29 @@ export default function MainLayout() {
   const menu = [
     { label: "Wykrojniki", path: "/die-cuts" },
     { label: "Dodaj wykrojnik", path: "/die-cuts/create" },
+    { label: "Magazyn Surowców", path: "/raw-materials" }, 
+    { label: "Przyjmij surowiec", path: "/raw-materials/create" }, 
   ];
 
   // MAPA STATYCZNYCH ŚCIEŻEK
   const breadcrumbMap: Record<string, string[]> = {
     "/die-cuts": ["Wykrojniki"],
     "/die-cuts/create": ["Wykrojniki", "Dodaj"],
+    "/raw-materials": ["Magazyn"],
+    "/raw-materials/create": ["Magazyn", "Przyjęcie"],
   };
 
   // OBSŁUGA ŚCIEŻEK DYNAMICZNYCH
   function resolveDynamicBreadcrumb(pathname: string): string[] {
-    // /die-cuts/123
-    if (/^\/die-cuts\/\d+$/.test(pathname)) {
-      return ["Wykrojniki", "Szczegóły"];
-    }
+    // Wykrojniki
+    if (/^\/die-cuts\/\d+$/.test(pathname)) return ["Wykrojniki", "Szczegóły"];
+    if (/^\/die-cuts\/\d+\/edit$/.test(pathname)) return ["Wykrojniki", "Szczegóły", "Edycja"];
 
-    // /die-cuts/123/edit
-    if (/^\/die-cuts\/\d+\/edit$/.test(pathname)) {
-      return ["Wykrojniki", "Szczegóły", "Edycja"];
-    }
+    // Surowce (NOWE)
+    if (/^\/raw-materials\/\d+$/.test(pathname)) return ["Magazyn", "Szczegóły rolki"];
+    if (/^\/raw-materials\/\d+\/edit$/.test(pathname)) return ["Magazyn", "Edycja"];
 
-    return ["Wykrojniki"];
+    return ["Flexo Manager"];
   }
 
   const crumbs =
@@ -65,7 +67,7 @@ export default function MainLayout() {
         {/* TOPBAR */}
         <header className="bg-slate-800 border-b border-slate-700 px-6 py-4">
           <h2 className="text-lg font-semibold">
-            {menu.find((m) => m.path === location.pathname)?.label || "Szczegóły"}
+            {menu.find((m) => m.path === location.pathname)?.label || crumbs[crumbs.length - 1]}
           </h2>
         </header>
 

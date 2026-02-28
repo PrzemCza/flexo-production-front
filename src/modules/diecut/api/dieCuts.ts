@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "@/config"; // Używamy aliasu @
+import { API_URL } from "@/config"; 
 import { Page } from "@/shared/types/api"; // Wspólny typ dla stron
 
 
@@ -16,7 +16,7 @@ export interface DieCutQueryParams {
   sort?: string;
 }
 
-export type DieCut = {  // <--- To słowo 'export' musi tu być!
+export type DieCut = {  
   id: number;
   dieNumber: string;
   repeatTeeth: number;
@@ -40,7 +40,7 @@ export type DieCutUpdatePayload = Omit<DieCut, "id" | "createdDate">;
 
 // FUNKCJE API
 export async function fetchDieCuts(params: DieCutQueryParams) {
-  // TypeScript teraz wie, że odpowiedź to Page<DieCut>
+  
   const response = await axios.get<Page<DieCut>>(`${API_URL}/api/die-cuts`, {
     params,
   });

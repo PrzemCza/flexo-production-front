@@ -9,8 +9,8 @@ export const diecutRoutes: RouteObject[] = [
     path: "die-cuts",
     children: [
       { index: true, element: <DieCutsList /> },
-      { path: "create", element: <DieCutCreate /> }, // <-- Przenieś to WYŻEJ
-      { path: ":id", element: <DieCutDetails /> },   // <-- Parametr na końcu
+      { path: "create", element: <DieCutCreate /> }, 
+      { path: ":id", element: <DieCutDetails /> },  
       { path: ":id/edit", element: <DieCutEdit /> },
     ],
   },

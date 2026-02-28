@@ -42,7 +42,7 @@ export default function DieCutCreate() {
 
       return {
         ...prev,
-        [name]: newValue, // 'as any' tutaj pozwala na dynamiczny klucz przy rygorystycznym typie Payload
+        [name]: newValue,
       } as Partial<DieCutCreatePayload> as DieCutCreatePayload;
     });
   };
@@ -58,7 +58,7 @@ export default function DieCutCreate() {
     try {
       await createDieCut(form);
       showToast("Wykrojnik został dodany.", "success");
-      navigate("/die-cuts"); // Zmienione na pełną ścieżkę dla pewności
+      navigate("/die-cuts");
     } catch (err) {
       console.error("Błąd podczas tworzenia wykrojnika:", err);
       showToast("Nie udało się utworzyć wykrojnika.", "error");

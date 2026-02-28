@@ -21,7 +21,7 @@ export default function DieCutsList() {
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc" | null>(null);
 
-  // 🔥 Funkcja zmieniająca sortowanie
+  // Funkcja zmieniająca sortowanie
   const toggleSort = (field: string) => {
     if (sortField !== field) {
       setSortField(field);
@@ -35,7 +35,7 @@ export default function DieCutsList() {
     setPage(0);
   };
 
-  // 🔥 Pobieranie danych
+  // Pobieranie danych
   useEffect(() => {
     const load = async () => {
       setLoading(true);
@@ -49,7 +49,7 @@ export default function DieCutsList() {
         status: status || undefined,
         projectId: projectId ? Number(projectId) : undefined,
         dieNumber: dieNumber || undefined,
-        machine: undefined, // jeśli nie masz filtra po maszynie
+        machine: undefined,
         createdDateFrom: dateFrom || undefined,
         createdDateTo: dateTo || undefined,
         sort: sortParam,
@@ -63,7 +63,7 @@ export default function DieCutsList() {
     load();
   }, [page, status, projectId, dieNumber, sortField, sortDir, dateFrom, dateTo]);
 
-  // 🔥 Ikona sortowania
+  // Ikona sortowania
   const sortIcon = (field: string) => {
     if (sortField !== field) return "↕";
     if (sortDir === "asc") return "▲";

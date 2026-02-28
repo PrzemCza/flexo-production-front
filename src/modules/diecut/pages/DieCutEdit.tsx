@@ -40,7 +40,7 @@ const handleChange = (
     setForm((prev) => {
       if (!prev) return prev;
 
-      // Jeśli zmieniamy status i NIE jest ACTIVE → czyścimy machine
+      
       if (name === "status" && value !== "ACTIVE") {
         return {
           ...prev,
@@ -53,7 +53,7 @@ const handleChange = (
         ? Number(value)
         : value;
 
-      // Poprawka błędu 'any' - rzutujemy cały obiekt na DieCut
+      
       return {
         ...prev,
         [name]: newValue,

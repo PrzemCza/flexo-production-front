@@ -17,11 +17,11 @@ export default function DieCutDetails() {
   useEffect(() => {
       const dieId = Number(id);
       
-      // Jeśli id to "create" lub inny tekst, nie rób zapytania
+      
       if (isNaN(dieId)) return; 
 
       const load = async () => {
-        setLoading(true); // Ustaw ładowanie na true przy zmianie ID
+        setLoading(true); 
         try {
           const result = await getDieCut(dieId);
           setData(result);
