@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
 import MainLayout from "@/layout/MainLayout";
 import { diecutRoutes } from "@/modules/diecut/routes";
 import { rawMaterialRoutes } from "@/modules/rawmaterial/routes";
+import { inkRoutes } from "@/modules/ink/routes";
 
 const router = createBrowserRouter([
   {
@@ -10,7 +11,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/die-cuts" replace /> },
       ...diecutRoutes,
-      ...rawMaterialRoutes
+      ...rawMaterialRoutes,
+      ...inkRoutes,
     ],
   },
 ]);
