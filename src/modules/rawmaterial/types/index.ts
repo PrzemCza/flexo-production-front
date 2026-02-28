@@ -1,6 +1,6 @@
 import { Page } from "@/shared/types/api";
 
-export type RawMaterialStatus = "AVAILABLE" | "IN_USE" | "RESERVED" | "FINISHED";
+export type RawMaterialStatus = "AVAILABLE" | "IN_USE" | "READY" | "COMPLAINT";
 
 export interface RawMaterial {
   id: number;
@@ -10,7 +10,8 @@ export interface RawMaterial {
   supplier: string;
   receivedDate: string; // java.sql.Date przyjdzie jako string ISO
   status: RawMaterialStatus;
-  warehouseLocation: string | null;
+  warehouseLocation?: string | null;
+  assignedMachine?: string;
 }
 
 // CreateRawMaterialRequest z backendu

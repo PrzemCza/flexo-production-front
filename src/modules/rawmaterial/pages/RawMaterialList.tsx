@@ -57,37 +57,66 @@ export default function RawMaterialList() {
               <th className="p-4 font-medium text-slate-300 text-right">Szerokość</th>
               <th className="p-4 font-medium text-slate-300 text-right">Długość</th>
               <th className="p-4 font-medium text-slate-300">Status</th>
-              <th className="p-4 font-medium text-slate-300">Lokalizacja</th>
+              <th className="p-4 font-medium text-slate-300">Lokalizacja / Maszyna</th>
               <th className="p-4 font-medium text-slate-300 text-center">Akcje</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700/50">
             {data?.content?.map((item: RawMaterial) => (
-              <tr key={item.id} className="hover:bg-slate-700/30 transition">
+              <tr key={item.id} className="hover:bg-slate-700/30 transition border-b border-slate-700/30 last:border-0">
                 <td className="p-4 text-slate-200">{item.supplier}</td>
-                <td className="p-4 text-blue-400 font-mono text-sm">{item.batchNumber}</td>
+                <td className="p-4 text-blue-400 font-mono text-sm font-medium">{item.batchNumber}</td>
                 <td className="p-4 text-slate-200 text-right">{item.widthMm} mm</td>
                 <td className="p-4 text-slate-200 text-right">{item.lengthM} mb</td>
                 <td className="p-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusClass(item.status)}`}>
+                  <span className={`px-2 py-1 rounded-md text-[10px] uppercase tracking-wider font-bold border ${getStatusClass(item.status)}`}>
                     {item.status}
                   </span>
                 </td>
-                <td className="p-4 text-slate-400 text-sm">{item.warehouseLocation || "—"}</td>
+                
+                {/* DYNAMICZNA KOLUMNA LOKALIZACJI */}
+                <td className="p-4">
+                  {item.status === 'READY' || item.status === 'IN_USE' ? (
+                    <div className="flex items-center gap-2 text-amber-400">
+                      <div className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                      </div>
+                      <span className="text-sm font-semibold tracking-wide">
+                        MASZYNA: {item.assignedMachine || "???"}
+                      </span>
+                    </div>
+                  ) : item.status === 'COMPLAINT' ? (
+                    <span className="text-red-400 text-sm italic font-medium">Blokada reklamacyjna</span>
+                  ) : (
+                    <span className="text-slate-400 text-sm font-medium">
+                      {item.warehouseLocation || "Brak lokalizacji"}
+                    </span>
+                  )}
+                </td>
+
                 <td className="p-4 text-center">
-                  <Link
-                    to={`/raw-materials/${item.id}`}
-                    className="text-blue-400 hover:text-blue-300 text-sm font-medium"
-                  >
-                    Szczegóły
-                  </Link>
+                  <div className="flex justify-center gap-4">
+                    <Link
+                      to={`/raw-materials/${item.id}`}
+                      className="text-blue-400 hover:text-blue-300 text-sm font-semibold transition underline-offset-4 hover:underline"
+                    >
+                      Szczegóły
+                    </Link>
+                    <Link
+                      to={`/raw-materials/${item.id}/edit`}
+                      className="text-amber-400 hover:text-amber-300 text-sm font-semibold transition underline-offset-4 hover:underline"
+                    >
+                      Edytuj
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}
             {data?.content?.length === 0 && (
               <tr>
-                <td colSpan={7} className="p-8 text-center text-slate-500 italic">
-                  Brak surowców w bazie danych.
+                <td colSpan={7} className="p-12 text-center text-slate-500 italic">
+                  Nie znaleziono surowców spełniających kryteria.
                 </td>
               </tr>
             )}
@@ -95,22 +124,26 @@ export default function RawMaterialList() {
         </table>
       </div>
 
-      {/* PROSTA PAGINACJA */}
+      {/* PAGINACJA */}
       <div className="flex justify-between items-center text-sm text-slate-400 px-2">
-        <span>Łącznie: {data?.totalElements || 0}</span>
+        <div className="flex items-center gap-4">
+           <span>Łącznie: <span className="text-slate-200 font-medium">{data?.totalElements || 0}</span></span>
+        </div>
         <div className="flex gap-2">
           <button
             disabled={params.page === 0}
             onClick={() => setParams(p => ({ ...p, page: (p.page || 0) - 1 }))}
-            className="px-3 py-1 bg-slate-800 rounded border border-slate-700 disabled:opacity-30"
+            className="px-4 py-2 bg-slate-800 rounded-lg border border-slate-700 hover:bg-slate-700 transition disabled:opacity-20 disabled:cursor-not-allowed"
           >
             Poprzednia
           </button>
-          <span className="py-1">Strona {(data?.number || 0) + 1} z {data?.totalPages || 1}</span>
+          <div className="flex items-center px-4 bg-slate-900/50 rounded-lg border border-slate-700">
+            Strona {(data?.number || 0) + 1} z {data?.totalPages || 1}
+          </div>
           <button
             disabled={(data?.number || 0) + 1 >= (data?.totalPages || 1)}
             onClick={() => setParams(p => ({ ...p, page: (p.page || 0) + 1 }))}
-            className="px-3 py-1 bg-slate-800 rounded border border-slate-700 disabled:opacity-30"
+            className="px-4 py-2 bg-slate-800 rounded-lg border border-slate-700 hover:bg-slate-700 transition disabled:opacity-20 disabled:cursor-not-allowed"
           >
             Następna
           </button>
@@ -120,12 +153,17 @@ export default function RawMaterialList() {
   );
 }
 
-// Funkcja pomocnicza dla statusów (możesz ją przenieść do folderu utils)
 function getStatusClass(status: string) {
   switch (status) {
-    case "AVAILABLE": return "bg-green-500/10 text-green-500 border border-green-500/20";
-    case "IN_USE": return "bg-blue-500/10 text-blue-500 border border-blue-500/20";
-    case "FINISHED": return "bg-slate-500/10 text-slate-500 border border-slate-500/20";
-    default: return "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20";
+    case "AVAILABLE": 
+      return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
+    case "READY": 
+      return "bg-blue-500/10 text-blue-400 border-blue-500/20";
+    case "IN_USE": 
+      return "bg-amber-500/10 text-amber-500 border-amber-500/20";
+    case "COMPLAINT": 
+      return "bg-red-500/10 text-red-500 border-red-500/20";
+    default: 
+      return "bg-slate-500/10 text-slate-500 border-slate-500/20";
   }
 }
