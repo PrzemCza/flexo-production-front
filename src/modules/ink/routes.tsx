@@ -4,6 +4,7 @@ import InkCreate from "./pages/InkCreate";
 import InkDetails from "./pages/InkDetails";
 import InkEdit from "./pages/InkEdit";
 
+
 export const inkRoutes: RouteObject[] = [
   {
     path: "inks",

@@ -6,6 +6,7 @@ export interface Ink {
   batchNumber: string;
   receivedDate: string; // ISO date string
   status: string;
+  machine: string | null;
   notes: string | null;
 }
 

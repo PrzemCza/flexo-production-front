@@ -1,20 +1,35 @@
 import axios from "axios"; // Lub Twój skonfigurowany klient
 import type { Ink, InkPage, InkQueryParams } from "../types";
 
-const API_URL = "/api/inks";
+const API_URL = "http://192.168.50.235:8191/api/inks";
 
 export const fetchInks = async (params: InkQueryParams): Promise<InkPage> => {
-  // Jeśli nie masz jeszcze paginacji/filtrowania na backendzie (InkFilter), 
-  // ten endpoint po prostu zwróci listę, którą trzeba będzie obsłużyć.
-  const response = await axios.get<Ink[]>(API_URL, { params });
-  
-  // Tymczasowe mapowanie na format strony, jeśli backend zwraca na razie tylko List<InkResponse>
+  const response = await axios.get(API_URL, { params });
+  const data = response.data;
+
+  // Sprawdzamy, czy backend zwrócił obiekt z polem 'content' (paginacja Springa)
+  if (data && Array.isArray(data.content)) {
+    return data;
+  }
+
+  // Jeśli backend zwrócił po prostu tablicę, pakujemy ją w strukturę InkPage
+  if (Array.isArray(data)) {
+    return {
+      content: data,
+      totalElements: data.length,
+      totalPages: 1,
+      size: data.length,
+      number: 0,
+    };
+  }
+
+  // Zabezpieczenie na wypadek pustej odpowiedzi lub błędu struktury
   return {
-    content: response.data,
-    totalElements: response.data.length,
-    totalPages: 1,
+    content: [],
+    totalElements: 0,
+    totalPages: 0,
     size: 20,
-    number: 0
+    number: 0,
   };
 };
 
