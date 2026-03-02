@@ -3,6 +3,7 @@ import MainLayout from "@/layout/MainLayout";
 import { diecutRoutes } from "@/modules/diecut/routes";
 import { rawMaterialRoutes } from "@/modules/rawmaterial/routes";
 import { inkRoutes } from "@/modules/ink/routes";
+import { polymerRoutes } from "@/modules/polymer/routes";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
       ...diecutRoutes,
       ...rawMaterialRoutes,
       ...inkRoutes,
+      ...polymerRoutes
     ],
   },
 ]);

@@ -10,6 +10,8 @@ export default function MainLayout() {
     { label: "Przyjmij surowiec", path: "/raw-materials/create" }, 
     { label: "Magazyn Farb", path: "/inks" }, 
     { label: "Dodaj farbę", path: "/inks/create" }, 
+    { label: "Magazyn Polimerów", path: "/polymers" }, // DODANO
+    { label: "Dodaj polimer", path: "/polymers/create" }, // DODANO
   ];
 
   // MAPA STATYCZNYCH ŚCIEŻEK
@@ -20,6 +22,8 @@ export default function MainLayout() {
     "/raw-materials/create": ["Magazyn", "Przyjęcie"],
     "/inks": ["Magazyn Farb"],
     "/inks/create": ["Magazyn Farb", "Nowy pojemnik"],
+    "/polymers": ["Polimery"], // DODANO
+    "/polymers/create": ["Polimery", "Dodaj"], // DODANO
   };
 
   // OBSŁUGA ŚCIEŻEK DYNAMICZNYCH
@@ -32,9 +36,13 @@ export default function MainLayout() {
     if (/^\/raw-materials\/\d+$/.test(pathname)) return ["Magazyn", "Szczegóły rolki"];
     if (/^\/raw-materials\/\d+\/edit$/.test(pathname)) return ["Magazyn", "Edycja"];
 
-    // Farby (NOWE)
+    // Farby
     if (/^\/inks\/\d+$/.test(pathname)) return ["Magazyn Farb", "Szczegóły farby"];
     if (/^\/inks\/\d+\/edit$/.test(pathname)) return ["Magazyn Farb", "Edycja"];
+
+    // Polimery (DODANO)
+    if (/^\/polymers\/\d+$/.test(pathname)) return ["Polimery", "Szczegóły formy"];
+    if (/^\/polymers\/\d+\/edit$/.test(pathname)) return ["Polimery", "Edycja"];
 
     return ["Flexo Manager"];
   }
@@ -75,7 +83,7 @@ export default function MainLayout() {
       </aside>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden">
 
         {/* TOPBAR */}
         <header className="bg-slate-800 border-b border-slate-700 px-6 py-4 flex items-center justify-between shadow-sm">
