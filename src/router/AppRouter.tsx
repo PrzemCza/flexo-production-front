@@ -4,6 +4,7 @@ import { diecutRoutes } from "@/modules/diecut/routes";
 import { rawMaterialRoutes } from "@/modules/rawmaterial/routes";
 import { inkRoutes } from "@/modules/ink/routes";
 import { polymerRoutes } from "@/modules/polymer/routes";
+import { productionMonitorRoutes } from "@/modules/productionmonitor/routes";
 
 const router = createBrowserRouter([
   {
@@ -14,7 +15,8 @@ const router = createBrowserRouter([
       ...diecutRoutes,
       ...rawMaterialRoutes,
       ...inkRoutes,
-      ...polymerRoutes
+      ...polymerRoutes,
+      ...productionMonitorRoutes
     ],
   },
 ]);
