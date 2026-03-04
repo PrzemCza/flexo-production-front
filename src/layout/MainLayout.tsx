@@ -4,7 +4,7 @@ export default function MainLayout() {
   const location = useLocation();
 
   const menu = [
-    { label: "Monitor Produkcji", path: "/production-monitor" }, // NOWOŚĆ
+    { label: "Monitor Produkcji", path: "/production-monitor" },
     { label: "Wykrojniki", path: "/die-cuts" },
     { label: "Dodaj wykrojnik", path: "/die-cuts/create" },
     { label: "Magazyn Surowców", path: "/raw-materials" }, 
@@ -17,7 +17,8 @@ export default function MainLayout() {
 
   // MAPA STATYCZNYCH ŚCIEŻEK
   const breadcrumbMap: Record<string, string[]> = {
-    "/production-monitor": ["Produkcja", "Monitor Live"], // NOWOŚĆ
+    "/production-monitor": ["Produkcja", "Monitor Live"],
+    "/production-monitor/new": ["Produkcja", "Nowe Zlecenie"], // DODANO
     "/die-cuts": ["Wykrojniki"],
     "/die-cuts/create": ["Wykrojniki", "Dodaj"],
     "/raw-materials": ["Magazyn"],
@@ -30,7 +31,8 @@ export default function MainLayout() {
 
   // OBSŁUGA ŚCIEŻEK DYNAMICZNYCH
   function resolveDynamicBreadcrumb(pathname: string): string[] {
-    // Monitor Produkcji (przyszłościowe detale zlecenia)
+    // Monitor Produkcji - Obsługa edycji i szczegółów
+    if (/^\/production-monitor\/edit\/\d+$/.test(pathname)) return ["Produkcja", "Monitor", "Edycja Zlecenia"]; // DODANO
     if (/^\/production-monitor\/\d+$/.test(pathname)) return ["Produkcja", "Szczegóły zlecenia"];
 
     // Wykrojniki
@@ -55,6 +57,15 @@ export default function MainLayout() {
   const crumbs =
     breadcrumbMap[location.pathname] ??
     resolveDynamicBreadcrumb(location.pathname);
+
+  // Funkcja pomocnicza do nagłówka Topbaru
+  const getPageTitle = () => {
+    const staticTitle = menu.find((m) => m.path === location.pathname)?.label;
+    if (staticTitle) return staticTitle;
+    
+    // Fallback dla dynamicznych tytułów na podstawie okruszków
+    return crumbs[crumbs.length - 1];
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-900 text-slate-100 font-sans">
@@ -98,13 +109,12 @@ export default function MainLayout() {
 
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col overflow-hidden relative">
-        {/* Subtelny gradient w tle dla głębi */}
         <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-indigo-500/5 blur-[120px] pointer-events-none" />
 
         {/* TOPBAR */}
         <header className="bg-slate-800/80 backdrop-blur-md border-b border-slate-700 px-8 py-5 flex items-center justify-between shadow-sm z-10">
           <h2 className="text-xl font-bold text-white">
-            {menu.find((m) => m.path === location.pathname)?.label || crumbs[crumbs.length - 1]}
+            {getPageTitle()}
           </h2>
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">

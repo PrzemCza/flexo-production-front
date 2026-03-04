@@ -5,13 +5,23 @@ export interface ProjectOrderMonitor {
   targetMachine: string;
   status: string;
   deadline: string;
-  
-  // Flagi gotowości z Twojego serwisu
+
+  // Flagi dla Dashboardu (zgodne z Twoim Dashboardem)
   isRawMaterialReady: boolean;
   isDieCutReady: boolean;
   isPolymerReady: boolean;
   isInksReady: boolean;
   
-  // Postęp farb np. "2/5"
-  inksProgress: string;
+  // Dane tekstowe do Dashboardu
+  rawMaterialName: string;
+  dieCutName: string;
+  polymerName: string;
+  inksProgress: string; 
+  inkList: string[];
+
+  // KLUCZOWE: Pola ID do edycji w Formularzu (Opcjonalne)
+  rawMaterialId?: number;
+  dieCutId?: number;
+  polymerId?: number;
+  inkIds?: number[];
 }
