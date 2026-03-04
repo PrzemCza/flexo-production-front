@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getDieCut, updateDieCut } from "@/modules/diecut/api/dieCuts";
-import type { DieCut } from "@/modules/diecut/api/dieCuts";
+import type { DieCut, DieCutUpdatePayload } from "@/modules/diecut/api/dieCuts";
 import ConfirmModal from "@/shared/components/ConfirmModal";
 import { useToast } from '@/shared/hooks/useToast';
 
@@ -30,7 +30,7 @@ export default function DieCutEdit() {
     load();
   }, [id, showToast]);
 
-const handleChange = (
+  const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
@@ -40,7 +40,6 @@ const handleChange = (
     setForm((prev) => {
       if (!prev) return prev;
 
-      
       if (name === "status" && value !== "ACTIVE") {
         return {
           ...prev,
@@ -53,7 +52,6 @@ const handleChange = (
         ? Number(value)
         : value;
 
-      
       return {
         ...prev,
         [name]: newValue,
@@ -70,7 +68,20 @@ const handleChange = (
     if (!form) return;
 
     try {
-      await updateDieCut(Number(id), form);
+      // NAJCZYSTSZE ROZWIĄZANIE: Mapujemy jawnie pola na nowy obiekt.
+      // Unikamy destrukturyzacji (const {id, ...rest}), która tworzy nieużywane zmienne.
+      const payload: DieCutUpdatePayload = {
+        dieNumber: form.dieNumber,
+        repeatTeeth: form.repeatTeeth,
+        projectId: form.projectId,
+        status: form.status,
+        machine: form.machine,
+        storageLocation: form.storageLocation,
+        notes: form.notes,
+      };
+
+      await updateDieCut(Number(id), payload);
+      
       showToast("Zmiany zostały zapisane.", "success");
       navigate(`/die-cuts/${id}`);
     } catch (err) {
@@ -82,69 +93,53 @@ const handleChange = (
   };
 
   if (loading || !form) return <div className="p-6 text-slate-400">Ładowanie...</div>;
+
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-6">Edytuj wykrojnik</h1>
 
       <form onSubmit={handleSubmit} className="max-w-xl">
         <div className="space-y-6 bg-slate-800 p-6 rounded-lg shadow-lg border border-slate-700">
-
-          {/* NUMER */}
           <div>
-            <label className="block mb-1 font-medium text-slate-200">
-              Numer wykrojnika
-            </label>
+            <label className="block mb-1 font-medium text-slate-200">Numer wykrojnika</label>
             <input
               type="text"
               name="dieNumber"
               value={form.dieNumber}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+              className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
             />
           </div>
 
-          {/* POWTÓRZENIA */}
           <div>
-            <label className="block mb-1 font-medium text-slate-200">
-              Powtórzenia zębów
-            </label>
+            <label className="block mb-1 font-medium text-slate-200">Powtórzenia zębów</label>
             <input
               type="number"
               name="repeatTeeth"
               value={form.repeatTeeth}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+              className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
             />
           </div>
 
-          {/* PROJEKT */}
           <div>
-            <label className="block mb-1 font-medium text-slate-200">
-              ID projektu
-            </label>
+            <label className="block mb-1 font-medium text-slate-200">ID projektu</label>
             <input
               type="number"
               name="projectId"
               value={form.projectId}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+              className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
             />
           </div>
 
-          {/* STATUS */}
           <div>
-            <label className="block mb-1 font-medium text-slate-200">
-              Status
-            </label>
+            <label className="block mb-1 font-medium text-slate-200">Status</label>
             <select
               name="status"
               value={form.status}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+              className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
             >
               <option value="ACTIVE">ACTIVE</option>
               <option value="INACTIVE">INACTIVE</option>
@@ -153,18 +148,14 @@ const handleChange = (
             </select>
           </div>
 
-          {/* MASZYNA — tylko gdy ACTIVE */}
           {form.status === "ACTIVE" && (
             <div>
-              <label className="block mb-1 font-medium text-slate-200">
-                Maszyna
-              </label>
+              <label className="block mb-1 font-medium text-slate-200">Maszyna</label>
               <select
                 name="machine"
                 value={form.machine ?? ""}
                 onChange={handleChange}
-                className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                           focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+                className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
               >
                 <option value="">Wybierz maszynę</option>
                 <option value="P5">P5</option>
@@ -175,25 +166,20 @@ const handleChange = (
             </div>
           )}
 
-          {/* NOTATKI */}
           <div>
-            <label className="block mb-1 font-medium text-slate-200">
-              Notatki
-            </label>
+            <label className="block mb-1 font-medium text-slate-200">Notatki</label>
             <textarea
               name="notes"
               value={form.notes ?? ""}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 
-                         focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
+              className="w-full px-4 py-2 rounded bg-slate-900 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-600 outline-none"
               rows={3}
             />
           </div>
 
           <button
             type="submit"
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium 
-                       shadow-md transition"
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium shadow-md transition"
           >
             Zapisz zmiany
           </button>

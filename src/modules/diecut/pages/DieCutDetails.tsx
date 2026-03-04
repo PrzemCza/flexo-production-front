@@ -43,7 +43,7 @@ export default function DieCutDetails() {
     try {
       await deleteDieCut(Number(id));
       showToast("Wykrojnik został usunięty.", "success");
-      navigate("/");
+      navigate("/die-cuts"); // Powrót do listy, nie na stronę główną
     } catch (err) {
       console.error("Błąd usuwania:", err);
       showToast("Nie udało się usunąć wykrojnika.", "error");

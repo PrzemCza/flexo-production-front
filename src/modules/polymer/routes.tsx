@@ -9,6 +9,7 @@ export const polymerRoutes: RouteObject[] = [
         children: [
           { index: true, element: <PolymerList /> },
           { path: "create", element: <PolymerForm /> },
+          { path: ":id/edit", element: <PolymerForm /> },
         ],
       },
     ];
