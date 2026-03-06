@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { Polymer, PolymerPage, PolymerQueryParams, CreatePolymerRequest } from '../types';
 
-const API_URL = 'http://192.168.50.235:8191/api/polymers';
+//const API_URL = 'http://192.168.50.235:8191/api/polymers';
+const API_URL = 'http://localhost:8191/api/polymers';
 
 const apiClient = axios.create({
   baseURL: API_URL,

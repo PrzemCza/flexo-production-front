@@ -1,7 +1,8 @@
 import axios from "axios";
 import { ProjectOrderMonitor } from "../types";
 
-const BASE_URL = "http://192.168.50.235:8191/api";
+//const BASE_URL = "http://192.168.50.235:8191/api";
+const BASE_URL = "http://localhost:8191/api";
 const API_URL = `${BASE_URL}/production-orders`;
 
 export interface ProductionOrderRequest {

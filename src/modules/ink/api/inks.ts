@@ -1,7 +1,10 @@
 import axios from "axios"; // Lub Twój skonfigurowany klient
 import type { Ink, InkPage, InkQueryParams } from "../types";
+//import { API_URL } from "@/config";
 
-const API_URL = "http://192.168.50.235:8191/api/inks";
+//const API_URL = "http://192.168.50.235:8191/api/inks";
+const API_URL = "http://localhost:8191/api/inks";
+//const BASE_URL = `${API_URL}/api/inks`; // Upewnij się, że ten URL jest poprawny i zgodny z Twoim backendem
 
 export const fetchInks = async (params: InkQueryParams): Promise<InkPage> => {
   const response = await axios.get(API_URL, { params });
